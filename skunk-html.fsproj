@@ -4,6 +4,7 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>net10.0</TargetFramework>
         <RootNamespace>skunk_html</RootNamespace>
+        <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,6 +17,7 @@
 
     <ItemGroup>
       <PackageReference Include="Fsharp.Formatting" Version="22.1.0" />
+      <PackageReference Include="FSharp.Core" Version="10.1.204" />
     </ItemGroup>
 
 </Project>
