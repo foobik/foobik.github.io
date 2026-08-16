@@ -1,21 +1,43 @@
-/* SkunkHTML default tweaks
-   Dark mode works automatically because data-color-mode="user" is set on <html>.
-   For alternative themes, see the themes/ folder: theme-ocean.css, theme-terminal.css, theme-ink.css */
+/* SkunkHTML Theme: Terminal
+   A green-on-dark terminal aesthetic that respects user's color scheme preference.
+   Light mode: warm off-white with green accents.
+   Dark mode: classic terminal green on near-black.
+   To use: replace the contents of css/tweaks.css with this file. */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
     --width-content: 800px;
-    --color-link: #878BEE;
-    --color-table: #878BEE;
-    --color-accent: #878BEE15;
+    --color-accent: #2ea04315;
+    --color-bg: #f6f8f0;
+    --color-bg-secondary: #e2e6d9;
+    --color-link: #1a7f37;
+    --color-secondary: #0550ae;
+    --color-secondary-accent: #0550ae0b;
+    --color-shadow: #d0d7c5;
+    --color-table: #1a7f37;
+    --color-text: #1b1f23;
+    --color-text-secondary: #57606a;
+    --color-scrollbar: #8dc572;
+    --font-family: "JetBrains Mono", "Courier New", monospace;
 }
+
 @media (prefers-color-scheme: dark) {
     :root[data-color-mode="user"] {
-        --color-bg: #231D29;
-        --color-link: #8F8CEF;
-        --color-table: #8F8CEF;
-        --color-accent: #8F8CEF4f;
+        --color-accent: #39d35326;
+        --color-bg: #0a0e0a;
+        --color-bg-secondary: #141a14;
+        --color-link: #39d353;
+        --color-secondary: #79c0ff;
+        --color-secondary-accent: #79c0ff15;
+        --color-shadow: #010201;
+        --color-table: #39d353;
+        --color-text: #b5e8b5;
+        --color-text-secondary: #7dab7d;
+        --color-scrollbar: #1e3a1e;
     }
 }
+
 nav a img {
     border-style: outset;
     border-color: var(--color-link);
@@ -30,7 +52,7 @@ blockquote p {
     line-height: var(--line-height);
     text-align: var(--justify-normal);
     border-right: none;
-    border-left: 0.25rem solid var(--color-accent);
+    border-left: 0.25rem solid var(--color-link);
     padding: 0 0 0 1rem;
     margin-left: 0;
     max-width: 100%;
@@ -81,4 +103,8 @@ table th[align="center"] {
 table td[align="right"],
 table th[align="right"] {
     text-align: right !important;
+}
+
+body {
+    font-weight: 400;
 }
