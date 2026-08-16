@@ -30,12 +30,22 @@ let main _ =
     let articlePages, otherPages = pages |> List.partition _.Date.IsSome
     let articles = articlePages |> List.sortByDescending _.Date
 
-    createIndexPage header footer articles
+    let totalIndexPages = createIndexPages header footer articles
     createNotFoundPage header footer
     pages |> List.iter (createPage header footer)
 
     createRssFeed articles
-    createSitemap (articles @ otherPages)
+
+    // page1 (index.html) is added separately inside createSitemap; only page2+ need an explicit entry
+    let paginationSitemapPages =
+        [ for pageNumber in 2 .. totalIndexPages ->
+            { SourcePath = ""
+              Title = ""
+              Link = $"page{pageNumber}.html"
+              Description = ""
+              Date = None } ]
+
+    createSitemap (articles @ otherPages @ paginationSitemapPages)
 
     Disk.copyFolderToOutput Config.fontsDir Config.outputFontsDir
     Disk.copyFolderToOutput Config.cssDir Config.outputCssDir

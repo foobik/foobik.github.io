@@ -137,7 +137,59 @@ let createPage (header: string) (footer: string) (page: Page) =
     printfn $"Processing {Path.GetFileName page.SourcePath} ->"
     Disk.writeFile (Path.Combine(Config.outputDir, page.Link)) finalHtmlContent
 
-let createIndexPage (header: string) (footer: string) (articles: Page list) =
+/// Renders a single article as a clickable card for the front-page listing.
+let private articleCardHtml (article: Page) =
+    let dateHtml =
+        match article.Date with
+        | Some date -> $"""<time class="card-date" datetime="{date}">{date}</time>"""
+        | None -> ""
+
+    let excerptHtml =
+        if String.IsNullOrWhiteSpace(article.Description) then ""
+        else $"""<p class="card-excerpt">{Xml.escape article.Description}</p>"""
+
+    $"""
+    <li class="card">
+        <a class="card-link" href="{article.Link}">
+            {dateHtml}
+            <h3 class="card-title">{Xml.escape article.Title}</h3>
+            {excerptHtml}
+            <span class="card-more">{Config.readMoreText} →</span>
+        </a>
+    </li>
+    """
+
+/// index.html for page 1, pageN.html for every subsequent page.
+let private indexPageFileName (pageNumber: int) =
+    if pageNumber = 1 then "index.html" else $"page{pageNumber}.html"
+
+let private paginationHtml (currentPage: int) (totalPages: int) =
+    if totalPages <= 1 then
+        ""
+    else
+        let prevHtml =
+            if currentPage > 1 then
+                $"""<a class="pagination__link" href="{indexPageFileName (currentPage - 1)}" rel="prev">← {Config.newerPostsText}</a>"""
+            else
+                $"""<span class="pagination__link pagination__link--disabled">← {Config.newerPostsText}</span>"""
+
+        let nextHtml =
+            if currentPage < totalPages then
+                $"""<a class="pagination__link" href="{indexPageFileName (currentPage + 1)}" rel="next">{Config.olderPostsText} →</a>"""
+            else
+                $"""<span class="pagination__link pagination__link--disabled">{Config.olderPostsText} →</span>"""
+
+        $"""
+        <nav class="pagination" aria-label="Pagination">
+            {prevHtml}
+            <span class="pagination__status">{currentPage} / {totalPages}</span>
+            {nextHtml}
+        </nav>
+        """
+
+/// Splits the articles across paginated front-page listings (index.html, page2.html, ...).
+/// Returns the total number of pages generated, so the caller can list them in the sitemap.
+let createIndexPages (header: string) (footer: string) (articles: Page list) =
     let frontPageMarkdownFilePath = Path.Combine(Config.markdownDir, Config.frontPageMarkdownFileName)
 
     let frontPageContentHtml =
@@ -148,31 +200,43 @@ let createIndexPage (header: string) (footer: string) (articles: Page list) =
             printfn $"Warning! File {Config.frontPageMarkdownFileName} does not exist! The main page will only contain blog entries, without a welcome message"
             ""
 
-    let articleListHtml =
-        articles
-        |> List.map (fun article ->
-            let datePrefix =
-                match article.Date with
-                | Some date -> $"{date}: "
-                | None -> ""
-            $"""<li>{datePrefix}<a href="{article.Link}">{Xml.escape article.Title}</a></li>""")
-        |> String.concat "\n"
+    let pageChunks =
+        if articles.IsEmpty then [ [] ]
+        else articles |> List.chunkBySize (max 1 Config.articlesPerPage)
 
-    let content =
-        $"""
-        {frontPageContentHtml}
-        <section class="publications">
-            <h2>{Config.blogEntriesHeading}</h2>
-            <ul>
-            {articleListHtml}
-            </ul>
-        </section>
-        """
+    let totalPages = pageChunks.Length
 
-    let canonicalUrl = baseUrl + "/"
-    let frontPageHtmlContent = generateFinalHtml (head "" Config.siteDescription canonicalUrl "website") header footer content highlightingScript
+    pageChunks
+    |> List.iteri (fun index chunk ->
+        let pageNumber = index + 1
+        let fileName = indexPageFileName pageNumber
 
-    Disk.writeFile (Path.Combine(Config.outputDir, "index.html")) frontPageHtmlContent
+        let welcomeHtml = if pageNumber = 1 then frontPageContentHtml else ""
+
+        let listHtml =
+            if articles.IsEmpty then
+                $"""<p class="empty-state">{Config.noPostsYetText}</p>"""
+            else
+                let cardsHtml = chunk |> List.map articleCardHtml |> String.concat "\n"
+                $"""<ul class="card-grid">{cardsHtml}</ul>{paginationHtml pageNumber totalPages}"""
+
+        let content =
+            $"""
+            {welcomeHtml}
+            <section class="publications">
+                <h2>{Config.blogEntriesHeading}</h2>
+                {listHtml}
+            </section>
+            """
+
+        let canonicalUrl = if pageNumber = 1 then baseUrl + "/" else $"{baseUrl}/{fileName}"
+        let titleSuffix = if pageNumber = 1 then "" else $" - {Config.blogEntriesHeading} {pageNumber}"
+        let finalHtmlContent =
+            generateFinalHtml (head titleSuffix Config.siteDescription canonicalUrl "website") header footer content highlightingScript
+
+        Disk.writeFile (Path.Combine(Config.outputDir, fileName)) finalHtmlContent)
+
+    totalPages
 
 /// Auto-generated 404 page, served by GitHub Pages for any missing URL.
 /// The <base> tag makes relative links work at any path depth. Written before

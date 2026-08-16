@@ -341,7 +341,7 @@ table tr:nth-child(even) {
     background-color: var(--color-bg-secondary);
 }
 
-/* ---------- Post list on the front page ---------- */
+/* ---------- Post cards on the front page ---------- */
 .publications h2 {
     font-size: 1rem;
     font-weight: 700;
@@ -349,38 +349,141 @@ table tr:nth-child(even) {
     text-transform: uppercase;
     color: var(--color-text-secondary);
     margin-top: 3rem;
+    margin-bottom: 1.5rem;
 }
 
-.publications ul {
-    border: 1px solid var(--color-border);
-    border-radius: var(--border-radius);
+.card-grid {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     list-style: none;
     margin: 0;
-    overflow: hidden;
     padding: 0;
 }
 
-.publications ul li {
-    border-bottom: 1px solid var(--color-border);
+.card {
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow) var(--color-shadow);
     padding: 0;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
-.publications ul li:last-child {
-    border-bottom: none;
+.card:hover {
+    border-color: var(--color-link);
+    box-shadow: 0 8px 24px -8px var(--color-shadow);
+    transform: translateY(-2px);
 }
 
-.publications ul li a {
+.card-link {
     border-bottom: none;
     color: var(--color-text);
-    display: block;
-    font-weight: 600;
-    padding: 1rem 1.25rem;
-    transition: background-color 0.15s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1.5rem;
 }
 
-.publications ul li a:hover {
-    background-color: var(--color-bg-secondary);
+.card-link:hover {
+    filter: none;
     opacity: 1;
+}
+
+.card-date {
+    color: var(--color-text-secondary);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.card-title {
+    color: var(--color-text);
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+    margin: 0.5rem 0 0.6rem;
+}
+
+.card-link:hover .card-title {
+    color: var(--color-link);
+}
+
+.card-excerpt {
+    color: var(--color-text-secondary);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    flex-grow: 1;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0 0 1rem;
+    overflow: hidden;
+}
+
+.card-more {
+    color: var(--color-link);
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-top: auto;
+    transition: gap 0.15s ease;
+}
+
+.empty-state {
+    background-color: var(--color-bg-secondary);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--border-radius);
+    color: var(--color-text-secondary);
+    padding: 2rem;
+    text-align: center;
+}
+
+/* ---------- Pagination ---------- */
+.pagination {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.pagination__link {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 9999px;
+    color: var(--color-text);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.55rem 1.1rem;
+    text-decoration: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+a.pagination__link:hover {
+    background-color: var(--color-bg);
+    border-color: var(--color-link);
+    color: var(--color-link);
+    filter: none;
+    opacity: 1;
+}
+
+.pagination__link--disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.pagination__status {
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+@media (max-width: 480px) {
+    .pagination__status {
+        display: none;
+    }
 }
 
 /* ---------- Footer ---------- */

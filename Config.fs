@@ -8,7 +8,7 @@ let siteTitle = "SkunkHTML"
 let siteDescription = "The blog on GitHub Pages."
 let siteBaseUrl = "https://foobik.github.io"  // No trailing slash. Include repo name if using project pages.
 let siteLanguage = "ru"
-let siteAuthor = "foobik"  // Optional, used in RSS feed and meta tags
+let siteAuthor = "(x)"  // Optional, used in RSS feed and meta tags
 let siteImage = "assets/avatar.jpg"  // Optional, preview image for social shares (og:image), relative to site root. "" disables
 
 // --- Interface text (translate these if your blog is not in English) ---
@@ -18,6 +18,13 @@ let untitledPageTitle = "No Title"  // Fallback title for pages without a # head
 let notFoundTitle = "Page not found"  // Browser tab title of the 404 page
 let notFoundMessage = "This page does not exist or has been moved."  // 404 page text
 let notFoundBackText = "Back to the front page"  // 404 page link text
+let readMoreText = "Read more"  // Link text on each card on the front page
+let newerPostsText = "Newer"  // Pagination link to the previous (more recent) page
+let olderPostsText = "Older"  // Pagination link to the next (older) page
+let noPostsYetText = "No posts yet - check back soon!"  // Shown on the front page when there are no articles
+
+// --- Pagination ---
+let articlesPerPage = 6  // How many post cards appear on each front-page listing before paginating
 
 // --- Folder layout (you normally don't need to touch these) ---
 let sourceDir = __SOURCE_DIRECTORY__
