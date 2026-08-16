@@ -1,40 +1,36 @@
-/* SkunkHTML Theme: Terminal
-   A green-on-dark terminal aesthetic that respects user's color scheme preference.
-   Light mode: warm off-white with green accents.
-   Dark mode: classic terminal green on near-black.
-   To use: replace the contents of css/tweaks.css with this file. */
-
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+/* SkunkHTML Theme: Ocean
+   A cool blue-toned theme that respects user's color scheme preference.
+   To use: replace the contents of css/tweaks.css with this file,
+   or rename this file to tweaks.css and place it in css/ */
 
 :root {
     --width-content: 800px;
-    --color-accent: #2ea04315;
-    --color-bg: #f6f8f0;
-    --color-bg-secondary: #e2e6d9;
-    --color-link: #1a7f37;
-    --color-secondary: #0550ae;
-    --color-secondary-accent: #0550ae0b;
-    --color-shadow: #d0d7c5;
-    --color-table: #1a7f37;
-    --color-text: #1b1f23;
-    --color-text-secondary: #57606a;
-    --color-scrollbar: #8dc572;
-    --font-family: "JetBrains Mono", "Courier New", monospace;
+    --color-accent: #0a84ff15;
+    --color-bg: #fafbfc;
+    --color-bg-secondary: #e1e4e8;
+    --color-link: #0366d6;
+    --color-secondary: #6f42c1;
+    --color-secondary-accent: #6f42c10b;
+    --color-shadow: #e1e4e8;
+    --color-table: #0366d6;
+    --color-text: #24292e;
+    --color-text-secondary: #586069;
+    --color-scrollbar: #c8d1d9;
 }
 
 @media (prefers-color-scheme: dark) {
     :root[data-color-mode="user"] {
-        --color-accent: #39d35326;
-        --color-bg: #0a0e0a;
-        --color-bg-secondary: #141a14;
-        --color-link: #39d353;
-        --color-secondary: #79c0ff;
-        --color-secondary-accent: #79c0ff15;
-        --color-shadow: #010201;
-        --color-table: #39d353;
-        --color-text: #b5e8b5;
-        --color-text-secondary: #7dab7d;
-        --color-scrollbar: #1e3a1e;
+        --color-accent: #388bfd26;
+        --color-bg: #0d1117;
+        --color-bg-secondary: #161b22;
+        --color-link: #58a6ff;
+        --color-secondary: #bc8cff;
+        --color-secondary-accent: #bc8cff15;
+        --color-shadow: #010409;
+        --color-table: #58a6ff;
+        --color-text: #c9d1d9;
+        --color-text-secondary: #8b949e;
+        --color-scrollbar: #30363d;
     }
 }
 
@@ -52,7 +48,7 @@ blockquote p {
     line-height: var(--line-height);
     text-align: var(--justify-normal);
     border-right: none;
-    border-left: 0.25rem solid var(--color-link);
+    border-left: 0.25rem solid var(--color-accent);
     padding: 0 0 0 1rem;
     margin-left: 0;
     max-width: 100%;
@@ -103,8 +99,4 @@ table th[align="center"] {
 table td[align="right"],
 table th[align="right"] {
     text-align: right !important;
-}
-
-body {
-    font-weight: 400;
 }
