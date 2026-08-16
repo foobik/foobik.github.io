@@ -6,7 +6,7 @@ open System.IO
 // Only change the values in quotes - the rest is just labels.
 let siteTitle = "SkunkHTML"
 let siteDescription = "The blog on GitHub Pages."
-let siteBaseUrl = "https://foobik.github.io/"  // No trailing slash. Include repo name if using project pages.
+let siteBaseUrl = "https://foobik.github.io/blog"  // No trailing slash. Include repo name if using project pages.
 let siteLanguage = "ru"
 let siteAuthor = "(x)"  // Optional, used in RSS feed and meta tags
 let siteImage = "assets/avatar.jpg"  // Optional, preview image for social shares (og:image), relative to site root. "" disables
