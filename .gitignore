@@ -444,7 +444,7 @@ Desktop.ini
 .ftp-deploy-sync-state.json
 
 # SkunkHTML build output
-skunk-html-output/
+# skunk-html-output/
 
 # Claude
 .claude/

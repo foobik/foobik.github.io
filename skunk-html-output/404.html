@@ -1,0 +1,138 @@
+
+    <!DOCTYPE html>
+    <html lang="ru" data-color-mode="user">
+    <head>
+        <base href="https://foobik.github.io/"><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+    (function () {
+        try {
+            var stored = localStorage.getItem("skunk-color-mode");
+            if (stored) {
+                document.documentElement.setAttribute("data-color-mode", stored);
+            }
+        } catch (e) {
+            /* localStorage unavailable - keep the default (system) mode */
+        }
+    })();
+</script>
+
+<title>SkunkHTML - Page not found</title>
+
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/tweaks.css">
+
+<script src="scripts/microlight.js"></script>
+
+<link rel="icon" type="image/png" href="assets/favicon-96x96.png" sizes="96x96">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+
+
+        <meta name="description" content="The blog on GitHub Pages.">
+        <meta name="author" content="(x)">
+        <meta property="og:title" content="SkunkHTML - Page not found">
+        <meta property="og:description" content="The blog on GitHub Pages.">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://foobik.github.io/404.html">
+        <meta property="og:image" content="https://foobik.github.io/assets/avatar.jpg">
+        <meta name="twitter:image" content="https://foobik.github.io/assets/avatar.jpg">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:title" content="SkunkHTML - Page not found">
+        <meta name="twitter:description" content="The blog on GitHub Pages.">
+        <link rel="canonical" href="https://foobik.github.io/404.html">
+        <link rel="alternate" type="application/rss+xml" title="SkunkHTML" href="https://foobik.github.io/feed.xml">
+        
+    </head>
+    <body>
+        <header>
+            <nav>
+    <a href="index.html">
+        <img alt="Avatar" src="./assets/avatar.jpg" height="90">
+    </a>
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="links.html">Links</a></li>
+    </ul>
+    <div class="theme-switch" role="group" aria-label="Тема оформления">
+        <button type="button" class="theme-switch__btn" data-theme-choice="light" aria-label="Светлая тема" title="Светлая тема">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="4"></circle>
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+            </svg>
+        </button>
+        <button type="button" class="theme-switch__btn" data-theme-choice="dark" aria-label="Тёмная тема" title="Тёмная тема">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"></path>
+            </svg>
+        </button>
+        <button type="button" class="theme-switch__btn" data-theme-choice="user" aria-label="Системная тема" title="Как в системе">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="13" rx="2"></rect>
+                <path d="M8 21h8M12 17v4"></path>
+            </svg>
+        </button>
+    </div>
+</nav>
+<script>
+(function () {
+    var STORAGE_KEY = "skunk-color-mode";
+    var root = document.documentElement;
+    var buttons = document.querySelectorAll(".theme-switch__btn");
+
+    function apply(mode) {
+        root.setAttribute("data-color-mode", mode);
+        buttons.forEach(function (btn) {
+            btn.setAttribute("aria-pressed", btn.dataset.themeChoice === mode ? "true" : "false");
+        });
+    }
+
+    var stored = null;
+    try {
+        stored = localStorage.getItem(STORAGE_KEY);
+    } catch (e) {
+        /* localStorage unavailable (private mode, etc.) - fall back to system */
+    }
+
+    apply(stored || "user");
+
+    buttons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            var mode = btn.dataset.themeChoice;
+            try {
+                localStorage.setItem(STORAGE_KEY, mode);
+            } catch (e) {
+                /* ignore - theme just won't persist */
+            }
+            apply(mode);
+        });
+    });
+})();
+</script>
+
+        </header>
+        <main>
+            
+        <h1>404</h1>
+        <p>This page does not exist or has been moved.</p>
+        <p><a href="index.html">Back to the front page</a></p>
+        
+        </main>
+        <hr>
+        <footer>
+            <small>Powered by <a href="https://github.com/mg0x7BE/skunk-html" target="_blank">SkunkHTML</a></small>
+
+        </footer>
+        <script>
+            // Syntax highlighting with microlight.js
+
+document.addEventListener("DOMContentLoaded", function() {
+    // All <code> elements with "language-" class prefix:
+    var nodes = document.querySelectorAll("pre code[class^='language-']");
+    microlight.reset(nodes);
+});
+        </script>
+    </body>
+    </html>
+    
