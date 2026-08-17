@@ -2,8 +2,10 @@ module SkunkHtml
 
 open SkunkUtils
 open System
+open System.Collections.Generic
 open System.Globalization
 open System.IO
+open System.Text.RegularExpressions
 open FSharp.Formatting.Markdown
 
 /// A single markdown page. Blog posts carry a publication date taken from the
@@ -28,6 +30,129 @@ let private highlightingScript =
 let private giscusScript =
     Path.Combine(Config.htmlDir, "script_giscus.html")
     |> Disk.readFile
+
+let private tocScript =
+    Path.Combine(Config.htmlDir, "script_toc.html")
+    |> Disk.readFile
+
+/// A table of contents entry: heading level (2 or 3), its anchor id, and its
+/// plain-text label.
+type private TocEntry = { Level: int; Id: string; Text: string }
+
+/// Adds `id` attributes to h2/h3 headings in `html` (slugified from their text,
+/// de-duplicated on collision) and returns the modified HTML alongside the
+/// extracted table of contents, in document order.
+let private injectTableOfContents (html: string) : string * TocEntry list =
+    let toc = ResizeArray<TocEntry>()
+    let slugCounts = Dictionary<string, int>()
+
+    let uniqueSlug (baseSlug: string) =
+        match slugCounts.TryGetValue(baseSlug) with
+        | true, count ->
+            slugCounts[baseSlug] <- count + 1
+            $"{baseSlug}-{count + 1}"
+        | false, _ ->
+            slugCounts[baseSlug] <- 1
+            baseSlug
+
+    let evaluator (m: Match) =
+        let level = int m.Groups[1].Value
+        let inner = m.Groups[2].Value
+        let text = Regex.Replace(inner, "<[^>]+>", "").Trim()
+        let id = uniqueSlug (Url.toUrlFriendly text)
+        toc.Add({ Level = level; Id = id; Text = text })
+        $"""<h{level} id="{id}">{inner}</h{level}>"""
+
+    let updatedHtml =
+        Regex.Replace(html, @"<h([23])>(.*?)</h\1>", MatchEvaluator(evaluator), RegexOptions.Singleline)
+
+    updatedHtml, List.ofSeq toc
+
+/// Sidebar table of contents markup, or "" when there aren't enough headings
+/// to make one worthwhile.
+let private tableOfContentsHtml (toc: TocEntry list) =
+    if toc.Length < 2 then
+        ""
+    else
+        let items =
+            toc
+            |> List.map (fun entry ->
+                let levelClass = if entry.Level = 3 then " toc__item--h3" else ""
+                $"""<li class="toc__item{levelClass}"><a href="#{entry.Id}">{Xml.escape entry.Text}</a></li>""")
+            |> String.concat "\n"
+
+        $"""
+        <aside class="toc" aria-label="{Xml.escape Config.tableOfContentsHeading}">
+            <p class="toc__title">{Xml.escape Config.tableOfContentsHeading}</p>
+            <ul class="toc__list">{items}</ul>
+        </aside>
+        """
+
+// --- Structured data (JSON-LD) ---
+// Appended into page content (Google reads JSON-LD from anywhere in the
+// document, not just <head>) alongside the other per-page scripts below.
+
+let private jsonLdScript (json: string) =
+    "<script type=\"application/ld+json\">\n" + json + "\n</script>"
+
+let private websiteStructuredData () =
+    "{\n"
+    + "  \"@context\": \"https://schema.org\",\n"
+    + "  \"@type\": \"WebSite\",\n"
+    + "  \"name\": \"" + Json.escape Config.siteTitle + "\",\n"
+    + "  \"description\": \"" + Json.escape Config.siteDescription + "\",\n"
+    + "  \"inLanguage\": \"" + Config.siteLanguage + "\",\n"
+    + "  \"url\": \"" + baseUrl + "/\"\n"
+    + "}"
+    |> jsonLdScript
+
+let private articleStructuredData (page: Page) (canonicalUrl: string) (date: string) =
+    let imageField =
+        if String.IsNullOrWhiteSpace(Config.siteImage) then
+            ""
+        else
+            let imageUrl = $"{baseUrl}/{Config.siteImage.TrimStart('/')}"
+            "  \"image\": \"" + imageUrl + "\",\n"
+
+    let authorField =
+        if String.IsNullOrWhiteSpace(Config.siteAuthor) then
+            ""
+        else
+            "  \"author\": { \"@type\": \"Person\", \"name\": \"" + Json.escape Config.siteAuthor + "\" },\n"
+
+    "{\n"
+    + "  \"@context\": \"https://schema.org\",\n"
+    + "  \"@type\": \"BlogPosting\",\n"
+    + "  \"headline\": \"" + Json.escape page.Title + "\",\n"
+    + "  \"description\": \"" + Json.escape page.Description + "\",\n"
+    + "  \"datePublished\": \"" + date + "\",\n"
+    + "  \"dateModified\": \"" + date + "\",\n"
+    + "  \"inLanguage\": \"" + Config.siteLanguage + "\",\n"
+    + "  \"mainEntityOfPage\": { \"@type\": \"WebPage\", \"@id\": \"" + canonicalUrl + "\" },\n"
+    + imageField
+    + authorField
+    + "  \"publisher\": { \"@type\": \"Organization\", \"name\": \"" + Json.escape Config.siteTitle + "\" }\n"
+    + "}"
+    |> jsonLdScript
+
+let private breadcrumbStructuredData (page: Page) (canonicalUrl: string) =
+    "{\n"
+    + "  \"@context\": \"https://schema.org\",\n"
+    + "  \"@type\": \"BreadcrumbList\",\n"
+    + "  \"itemListElement\": [\n"
+    + "    { \"@type\": \"ListItem\", \"position\": 1, \"name\": \""
+    + Json.escape Config.blogEntriesHeading
+    + "\", \"item\": \""
+    + baseUrl
+    + "/\" },\n"
+    + "    { \"@type\": \"ListItem\", \"position\": 2, \"name\": \""
+    + Json.escape page.Title
+    + "\", \"item\": \""
+    + canonicalUrl
+    + "\" }\n"
+    + "  ]\n"
+    + "}"
+    |> jsonLdScript
 
 let generateFinalHtml (head: string) (header: string) (footer: string) (content: string) (script: string) =
     $"""
@@ -128,8 +253,25 @@ let createPage (header: string) (footer: string) (page: Page) =
         | Some date ->
             let publicationDate =
                 $"""<p class="publication-date">{Config.publishedOnText} <time datetime="{date}">{date}</time></p>"""
-            let articleHtml = Markdown.ToHtml(markdownContent + "\n\n" + publicationDate + "\n\n")
-            articleHtml + giscusScript, "article"
+            let bodyHtml, toc = Markdown.ToHtml(markdownContent) |> injectTableOfContents
+
+            let articleHtml =
+                if toc.Length < 2 then
+                    bodyHtml + "\n\n" + publicationDate
+                else
+                    $"""
+                    <div class="article-layout">
+                        <article class="article-content">
+                            {bodyHtml}
+                            {publicationDate}
+                        </article>
+                        {tableOfContentsHtml toc}
+                    </div>
+                    """
+
+            let tocScriptIfAny = if toc.Length < 2 then "" else tocScript
+            let structuredData = articleStructuredData page canonicalUrl date + breadcrumbStructuredData page canonicalUrl
+            articleHtml + giscusScript + tocScriptIfAny + structuredData, "article"
 
     let finalHtmlContent =
         generateFinalHtml (head (" - " + page.Title) page.Description canonicalUrl ogType) header footer htmlContent highlightingScript
@@ -220,6 +362,8 @@ let createIndexPages (header: string) (footer: string) (articles: Page list) =
                 let cardsHtml = chunk |> List.map articleCardHtml |> String.concat "\n"
                 $"""<ul class="card-grid">{cardsHtml}</ul>{paginationHtml pageNumber totalPages}"""
 
+        let structuredData = if pageNumber = 1 then websiteStructuredData () else ""
+
         let content =
             $"""
             {welcomeHtml}
@@ -227,6 +371,7 @@ let createIndexPages (header: string) (footer: string) (articles: Page list) =
                 <h2>{Config.blogEntriesHeading}</h2>
                 {listHtml}
             </section>
+            {structuredData}
             """
 
         let canonicalUrl = if pageNumber = 1 then baseUrl + "/" else $"{baseUrl}/{fileName}"
@@ -250,7 +395,11 @@ let createNotFoundPage (header: string) (footer: string) =
         """
 
     let baseTag = $"""<base href="{baseUrl}/">"""
-    let headContent = baseTag + head (" - " + Config.notFoundTitle) "" $"{baseUrl}/404.html" "website"
+    // GitHub Pages serves this file with HTTP 200 (it's a static file, not a
+    // real 404 response), so search engines need this meta tag to know not
+    // to index it as real content.
+    let robotsMeta = """<meta name="robots" content="noindex, follow">"""
+    let headContent = baseTag + robotsMeta + head (" - " + Config.notFoundTitle) "" $"{baseUrl}/404.html" "website"
     let finalHtmlContent = generateFinalHtml headContent header footer content highlightingScript
 
     Disk.writeFile (Path.Combine(Config.outputDir, "404.html")) finalHtmlContent
@@ -330,3 +479,60 @@ let createSitemap (pages: Page list) =
         + "</urlset>"
 
     Disk.writeFile (Path.Combine(Config.outputDir, "sitemap.xml")) sitemap
+
+// --- robots.txt ---
+let createRobotsTxt () =
+    let robotsTxt =
+        "User-agent: *\n"
+        + "Allow: /\n"
+        + "\n"
+        + $"Sitemap: {baseUrl}/sitemap.xml\n"
+
+    Disk.writeFile (Path.Combine(Config.outputDir, "robots.txt")) robotsTxt
+
+// --- llms.txt (https://llmstxt.org) ---
+// A curated, LLM-friendly index of the site: title, one-line summary, and a
+// linked list of posts/pages with their descriptions. llms-full.txt below is
+// the companion file it points to - every post's raw Markdown in one file.
+let createLlmsTxt (articles: Page list) (otherPages: Page list) =
+    let linkList (pages: Page list) =
+        pages
+        |> List.map (fun page -> $"- [{page.Title}]({baseUrl}/{page.Link}): {page.Description}")
+        |> String.concat "\n"
+
+    let postsSection =
+        if articles.IsEmpty then "" else "\n\n## Posts\n\n" + linkList articles
+
+    let pagesSection =
+        if otherPages.IsEmpty then "" else "\n\n## Pages\n\n" + linkList otherPages
+
+    let llmsTxt =
+        $"# {Config.siteTitle}\n\n"
+        + $"> {Config.siteDescription}"
+        + postsSection
+        + pagesSection
+        + "\n\n## Full text\n\n"
+        + $"For the complete content of every post in a single file, see [llms-full.txt]({baseUrl}/llms-full.txt)."
+
+    Disk.writeFile (Path.Combine(Config.outputDir, "llms.txt")) llmsTxt
+
+/// Raw markdown source of a page, formatted as one llms-full.txt section.
+/// Markdown files already open with a `# Title` heading, so it doubles as
+/// this section's header - no separate one is added.
+let private llmsFullTxtSection (page: Page) =
+    let publishedLine =
+        match page.Date with
+        | Some date -> $"\n\n_Published on {date}_"
+        | None -> ""
+
+    File.ReadAllText(page.SourcePath).Trim() + publishedLine + "\n\n---\n"
+
+let createLlmsFullTxt (articles: Page list) (otherPages: Page list) =
+    let llmsFullTxt =
+        $"# {Config.siteTitle} - full text\n\n"
+        + $"> {Config.siteDescription}\n\n"
+        + $"Generated from {baseUrl}\n\n"
+        + "---\n\n"
+        + ((articles @ otherPages) |> List.map llmsFullTxtSection |> String.concat "\n")
+
+    Disk.writeFile (Path.Combine(Config.outputDir, "llms-full.txt")) llmsFullTxt

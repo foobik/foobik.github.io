@@ -456,3 +456,6 @@ node_modules/
 
 # Claude
 .claude/
+
+# References
++/

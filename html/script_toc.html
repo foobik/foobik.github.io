@@ -1,0 +1,28 @@
+<script>
+(function () {
+    var tocLinks = document.querySelectorAll(".toc__item a");
+    if (!tocLinks.length) return;
+
+    var targets = [];
+    tocLinks.forEach(function (link) {
+        var target = document.getElementById(link.getAttribute("href").slice(1));
+        if (target) targets.push(target);
+    });
+
+    function setActive(id) {
+        tocLinks.forEach(function (link) {
+            link.parentElement.classList.toggle("toc__item--active", link.getAttribute("href") === "#" + id);
+        });
+    }
+
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) setActive(entry.target.id);
+        });
+    }, { rootMargin: "-20% 0px -70% 0px" });
+
+    targets.forEach(function (target) {
+        observer.observe(target);
+    });
+})();
+</script>

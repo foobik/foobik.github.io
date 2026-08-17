@@ -36,8 +36,8 @@
         <meta property="og:description" content="Below are the most important links related to SkunkHTML:">
         <meta property="og:type" content="website">
         <meta property="og:url" content="https://foobik.github.io/links.html">
-        <meta property="og:image" content="https://foobik.github.io/assets/avatar.jpg">
-        <meta name="twitter:image" content="https://foobik.github.io/assets/avatar.jpg">
+        <meta property="og:image" content="https://foobik.github.io/assets/avatar.png">
+        <meta name="twitter:image" content="https://foobik.github.io/assets/avatar.png">
         <meta name="twitter:card" content="summary">
         <meta name="twitter:title" content="SkunkHTML - Links">
         <meta name="twitter:description" content="Below are the most important links related to SkunkHTML:">
@@ -49,7 +49,7 @@
         <header>
             <nav>
     <a href="index.html">
-        <img alt="Avatar" src="./assets/avatar.jpg" height="90">
+        <img alt="Avatar" src="./assets/avatar.png" height="90">
     </a>
     <ul>
         <li><a href="index.html">Home</a></li>
@@ -108,6 +108,44 @@
             apply(mode);
         });
     });
+})();
+</script>
+<script>
+(function () {
+    var header = document.querySelector("header");
+    if (!header) return;
+
+    function syncHeaderHeight() {
+        document.documentElement.style.setProperty("--header-height", header.offsetHeight + "px");
+    }
+
+    syncHeaderHeight();
+    window.addEventListener("resize", syncHeaderHeight);
+
+    var lastScrollY = window.scrollY;
+    var ticking = false;
+
+    function onScroll() {
+        var currentScrollY = window.scrollY;
+
+        if (currentScrollY <= header.offsetHeight) {
+            header.classList.remove("header--hidden");
+        } else if (currentScrollY > lastScrollY) {
+            header.classList.add("header--hidden");
+        } else if (currentScrollY < lastScrollY) {
+            header.classList.remove("header--hidden");
+        }
+
+        lastScrollY = currentScrollY;
+        ticking = false;
+    }
+
+    window.addEventListener("scroll", function () {
+        if (!ticking) {
+            window.requestAnimationFrame(onScroll);
+            ticking = true;
+        }
+    }, { passive: true });
 })();
 </script>
 

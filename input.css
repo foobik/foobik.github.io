@@ -53,14 +53,24 @@
     color: var(--color-text);
     font-family: var(--font-family);
     line-height: var(--line-height);
-    @apply m-0 overflow-x-hidden p-0;
+    /* clip, not hidden: `overflow-x: hidden` forces the UA to compute
+       overflow-y as auto too, which makes body its own scroll container and
+       breaks window.scrollY (used by the header show/hide script). clip
+       doesn't have that side effect. */
+    overflow-x: clip;
+    @apply m-0 p-0;
   }
 
   footer,
-  header,
   main {
     max-width: var(--width-content);
     @apply mx-auto px-4 py-12;
+  }
+
+  /* header is a full-width bar (see tweaks.scss for its fixed/hide-on-scroll
+     behavior) - width-constraining its content is nav's job, not header's. */
+  header {
+    @apply px-4;
   }
 
   hr {

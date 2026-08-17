@@ -186,11 +186,20 @@
   .static {
     position: static;
   }
+  .sticky {
+    position: sticky;
+  }
   .contents {
     display: contents;
   }
   .inline {
     display: inline;
+  }
+  .table {
+    display: table;
+  }
+  .resize {
+    resize: both;
   }
   .filter {
     filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
@@ -235,17 +244,19 @@
     color: var(--color-text);
     font-family: var(--font-family);
     line-height: var(--line-height);
+    overflow-x: clip;
     margin: 0px;
-    overflow-x: hidden;
     padding: 0px;
   }
   footer,
-  header,
   main {
     max-width: var(--width-content);
     margin-inline: auto;
     padding-inline: calc(var(--spacing) * 4);
     padding-block: calc(var(--spacing) * 12);
+  }
+  header {
+    padding-inline: calc(var(--spacing) * 4);
   }
   hr {
     background-color: var(--color-bg-secondary);

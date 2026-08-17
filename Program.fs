@@ -46,6 +46,9 @@ let main _ =
               Date = None } ]
 
     createSitemap (articles @ otherPages @ paginationSitemapPages)
+    createRobotsTxt ()
+    createLlmsTxt articles otherPages
+    createLlmsFullTxt articles otherPages
 
     Disk.copyFolderToOutput Config.fontsDir Config.outputFontsDir
     Disk.copyFolderToOutput Config.cssDir Config.outputCssDir

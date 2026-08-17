@@ -32,9 +32,13 @@ To publish a post: add a Markdown file to the `markdown-blog/` folder. The file 
 - **RSS feed** - your readers can subscribe (`/feed.xml`)
 - **Sitemap** - search engines find your content (`/sitemap.xml`)
 - **SEO meta tags** - Open Graph and Twitter Cards out of the box
+- **Structured data** - JSON-LD (BlogPosting, BreadcrumbList, WebSite) for richer search results, plus `robots.txt` and a `noindex`'d 404 page
+- **[llms.txt](https://llmstxt.org)** - a curated index of your posts/pages for LLMs, plus `llms-full.txt` with every post's full text in one file
 - **404 page** - a "not found" page in your site's style, generated automatically
 - **Dark mode** - respects your visitors' system preference automatically
 - **Themes** - choose from built-in color themes or tweak CSS variables
+- **Table of contents** - posts with 2+ headings get a sticky sidebar TOC with smooth-scroll anchor links and scroll-based active-section highlighting
+- **Smart header** - hides on scroll down, slides back in and stays pinned on scroll up
 - **Comments** - optional [Giscus](https://giscus.app/) integration
 - **Syntax highlighting** - code blocks are highlighted automatically
 - **Tailwind CSS + PostCSS** - styles are compiled from `input.css`, no framework CSS is hand-vendored

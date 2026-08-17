@@ -47,6 +47,16 @@ module Xml =
             .Replace("\"", "&quot;")
             .Replace("'", "&apos;")
 
+module Json =
+    /// Escape special characters for a JSON string value
+    let escape (input: string) =
+        input
+            .Replace("\\", "\\\\")
+            .Replace("\"", "\\\"")
+            .Replace("\r", "")
+            .Replace("\n", "\\n")
+            .Replace("\t", "\\t")
+
 module MarkdownUtils =
     open System.Text.RegularExpressions
 

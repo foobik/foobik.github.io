@@ -1,0 +1,15 @@
+# SkunkHTML
+
+> The blog on GitHub Pages.
+
+## Posts
+
+- [Почему ноутбук не видит SSD и как это исправить](https://foobik.github.io/почему-ноутбук-не-видит-ssd-и-как-это-исправить.html): SSD может «пропадать» по-разному: один накопитель просто не появляется в проводнике, хотя система прекрасно работает, другой не обнаруживается даже на уровне пр...
+
+## Pages
+
+- [Links](https://foobik.github.io/links.html): Below are the most important links related to SkunkHTML:
+
+## Full text
+
+For the complete content of every post in a single file, see [llms-full.txt](https://foobik.github.io/llms-full.txt).

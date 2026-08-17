@@ -9,7 +9,7 @@ let siteDescription = "The blog on GitHub Pages."
 let siteBaseUrl = "https://foobik.github.io"  // No trailing slash. Include repo name if using project pages.
 let siteLanguage = "ru"
 let siteAuthor = "(x)"  // Optional, used in RSS feed and meta tags
-let siteImage = "assets/avatar.jpg"  // Optional, preview image for social shares (og:image), relative to site root. "" disables
+let siteImage = "assets/avatar.png"  // Optional, preview image for social shares (og:image), relative to site root. "" disables
 
 // --- Interface text (translate these if your blog is not in English) ---
 let blogEntriesHeading = "blog entries"  // Section heading above the post list on the front page
@@ -22,6 +22,7 @@ let readMoreText = "Read more"  // Link text on each card on the front page
 let newerPostsText = "Newer"  // Pagination link to the previous (more recent) page
 let olderPostsText = "Older"  // Pagination link to the next (older) page
 let noPostsYetText = "No posts yet - check back soon!"  // Shown on the front page when there are no articles
+let tableOfContentsHeading = "Table of contents"  // Sidebar heading above a post's table of contents (shown when a post has 2+ headings)
 
 // --- Pagination ---
 let articlesPerPage = 6  // How many post cards appear on each front-page listing before paginating
