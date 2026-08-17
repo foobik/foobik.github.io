@@ -1,0 +1,19 @@
+{
+  "name": "skunk-html",
+  "private": true,
+  "description": "Tailwind CSS / PostCSS build for SkunkHTML's styles",
+  "scripts": {
+    "build:css": "postcss input.css -o css/styles.css",
+    "watch:css": "postcss input.css -o css/styles.css --watch",
+    "build:scss": "sass tweaks.scss:css/tweaks.css --no-source-map",
+    "watch:scss": "sass --watch tweaks.scss:css/tweaks.css --no-source-map",
+    "build": "npm run build:css && npm run build:scss && dotnet run --project skunk-html.fsproj"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.0",
+    "postcss": "^8.4.47",
+    "postcss-cli": "^11.0.1",
+    "sass": "^1.102.0",
+    "tailwindcss": "^4.1.0"
+  }
+}

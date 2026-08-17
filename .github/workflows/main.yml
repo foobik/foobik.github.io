@@ -19,6 +19,21 @@ jobs:
         with:
           dotnet-version: 10
 
+      - name: Setup Node.js
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install CSS build dependencies
+        run: npm ci
+
+      - name: Build Tailwind CSS
+        run: npm run build:css
+
+      - name: Build Sass (tweaks.css)
+        run: npm run build:scss
+
       - name: Generate static site
         run: dotnet run --project skunk-html.fsproj
 

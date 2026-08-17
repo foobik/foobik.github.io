@@ -1,0 +1,103 @@
+// Shared Sass helpers for css/tweaks.scss and the alternate themes in themes/.
+// Not compiled on its own - the leading underscore makes it a Sass "partial".
+
+// Emits `:root { --name: value; }` from a Sass map, plus the dark-mode variant(s).
+// $dark is applied both when the visitor explicitly picks "dark" (unless
+// $explicit-dark is false) and when they're on "system" and the OS prefers dark.
+@mixin palette($light, $dark: null, $explicit-dark: true) {
+  :root {
+    @each $name, $value in $light {
+      --#{$name}: #{$value};
+    }
+  }
+
+  @if $dark {
+    @if $explicit-dark {
+      :root[data-color-mode="dark"] {
+        @each $name, $value in $dark {
+          --#{$name}: #{$value};
+        }
+      }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root[data-color-mode="user"] {
+        @each $name, $value in $dark {
+          --#{$name}: #{$value};
+        }
+      }
+    }
+  }
+}
+
+// The look shared by the retro/GitHub-flavored alt themes (ocean, terminal, ink):
+// outset avatar border, left-bordered blockquote, wide scrollbars, and treating
+// markdown table alignment attributes as !important.
+@mixin classic-accents($blockquote-border: var(--color-secondary)) {
+  nav a img {
+    border-style: outset;
+    border-color: var(--color-link);
+    border-width: 1px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  }
+
+  blockquote,
+  blockquote p {
+    display: block;
+    font-size: medium;
+    line-height: var(--line-height);
+    text-align: var(--justify-normal);
+    border-right: none;
+    border-left: 0.25rem solid #{$blockquote-border};
+    padding: 0 0 0 1rem;
+    margin-left: 0;
+    max-width: 100%;
+  }
+
+  blockquote p {
+    border-left: none;
+  }
+
+  blockquote footer {
+    color: var(--color-text);
+    display: block;
+    font-size: small;
+    line-height: var(--line-height);
+    padding: 1.5rem 0;
+  }
+
+  a {
+    text-decoration: none;
+    word-break: break-word;
+  }
+
+  * {
+    scrollbar-width: auto;
+  }
+
+  nav {
+    margin-bottom: 1rem;
+  }
+
+  p img,
+  pre,
+  pre code,
+  pre samp {
+    max-width: 100%;
+  }
+
+  table td[align],
+  table th[align] {
+    text-align: left !important;
+  }
+
+  table td[align="center"],
+  table th[align="center"] {
+    text-align: center !important;
+  }
+
+  table td[align="right"],
+  table th[align="right"] {
+    text-align: right !important;
+  }
+}

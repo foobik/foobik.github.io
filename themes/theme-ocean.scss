@@ -1,0 +1,39 @@
+// SkunkHTML Theme: Ocean
+// A cool blue-toned theme that respects user's color scheme preference.
+// To use: replace the contents of tweaks.scss with this file (or copy this
+// file's $light/$dark maps and @include calls into it), then run
+// `npm run build:scss` (or `make build-scss`).
+@use "../palette";
+
+// Values are quoted strings on purpose - see the comment in tweaks.scss.
+$light: (
+  "width-content": "800px",
+  "color-accent": "#0a84ff15",
+  "color-bg": "#fafbfc",
+  "color-bg-secondary": "#e1e4e8",
+  "color-link": "#0366d6",
+  "color-secondary": "#6f42c1",
+  "color-secondary-accent": "#6f42c10b",
+  "color-shadow": "#e1e4e8",
+  "color-table": "#0366d6",
+  "color-text": "#24292e",
+  "color-text-secondary": "#586069",
+  "color-scrollbar": "#c8d1d9",
+);
+
+$dark: (
+  "color-accent": "#388bfd26",
+  "color-bg": "#0d1117",
+  "color-bg-secondary": "#161b22",
+  "color-link": "#58a6ff",
+  "color-secondary": "#bc8cff",
+  "color-secondary-accent": "#bc8cff15",
+  "color-shadow": "#010409",
+  "color-table": "#58a6ff",
+  "color-text": "#c9d1d9",
+  "color-text-secondary": "#8b949e",
+  "color-scrollbar": "#30363d",
+);
+
+@include palette.palette($light, $dark, $explicit-dark: false);
+@include palette.classic-accents($blockquote-border: var(--color-accent));

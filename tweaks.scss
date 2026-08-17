@@ -1,60 +1,61 @@
-:root {
-  --width-content: 760px;
-  --border-radius: 0.75rem;
-  --box-shadow: 0 1px 3px 0;
-  --color-accent: #4f46e51a;
-  --color-bg: #ffffff;
-  --color-bg-secondary: #f1f5f9;
-  --color-link: #4f46e5;
-  --color-secondary: #7c3aed;
-  --color-secondary-accent: #7c3aed0d;
-  --color-shadow: rgba(15, 23, 42, 0.08);
-  --color-table: #4f46e5;
-  --color-text: #0f172a;
-  --color-text-secondary: #64748b;
-  --color-scrollbar: #cbd5e1;
-  --color-border: #e2e8f0;
-  --color-code-bg: #0f172a;
-  --color-code-text: #e2e8f0;
-  --font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-family-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
-}
+// SkunkHTML — Modern (Tailwind-inspired) theme
+// Slate/Indigo palette, soft shadows, rounded corners, tight modern
+// typography. Supports three color modes via [data-color-mode] on <html>:
+//   - "light" -> forces the light palette below
+//   - "dark"  -> forces the dark palette below
+//   - "user"  -> follows the OS preference (prefers-color-scheme)
+// The mode is switched by the little control injected in html/header.html.
+//
+// Compiles to css/tweaks.css - run `npm run build:scss` (or `make build-scss`)
+// after editing. To switch themes, copy the contents of a theme file from
+// themes/*.scss into this file (or replace this file with it), then rebuild.
+@use "palette";
 
-:root[data-color-mode=dark] {
-  --color-accent: #818cf826;
-  --color-bg: #0b1120;
-  --color-bg-secondary: #161f32;
-  --color-link: #818cf8;
-  --color-secondary: #c4b5fd;
-  --color-secondary-accent: #c4b5fd15;
-  --color-shadow: rgba(0, 0, 0, 0.45);
-  --color-table: #818cf8;
-  --color-text: #e2e8f0;
-  --color-text-secondary: #94a3b8;
-  --color-scrollbar: #334155;
-  --color-border: #1e293b;
-  --color-code-bg: #0000004d;
-  --color-code-text: #e2e8f0;
-}
+// Values are quoted strings on purpose - Sass otherwise parses bare hex/rgba
+// tokens as its native `color` type and re-serializes them (harmless, but it
+// rewrites e.g. `#4f46e51a` as `rgba(79, 70, 229, 0.1019607843)`), and strips
+// the quotes off multi-word font names in bare lists.
+$light: (
+  "width-content": "760px",
+  "border-radius": "0.75rem",
+  "box-shadow": "0 1px 3px 0",
+  "color-accent": "#4f46e51a",
+  "color-bg": "#ffffff",
+  "color-bg-secondary": "#f1f5f9",
+  "color-link": "#4f46e5",
+  "color-secondary": "#7c3aed",
+  "color-secondary-accent": "#7c3aed0d",
+  "color-shadow": "rgba(15, 23, 42, 0.08)",
+  "color-table": "#4f46e5",
+  "color-text": "#0f172a",
+  "color-text-secondary": "#64748b",
+  "color-scrollbar": "#cbd5e1",
+  "color-border": "#e2e8f0",
+  "color-code-bg": "#0f172a",
+  "color-code-text": "#e2e8f0",
+  "font-family": "ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+  "font-family-mono": "ui-monospace, SFMono-Regular, \"SF Mono\", Menlo, Consolas, \"Liberation Mono\", monospace",
+);
 
-@media (prefers-color-scheme: dark) {
-  :root[data-color-mode=user] {
-    --color-accent: #818cf826;
-    --color-bg: #0b1120;
-    --color-bg-secondary: #161f32;
-    --color-link: #818cf8;
-    --color-secondary: #c4b5fd;
-    --color-secondary-accent: #c4b5fd15;
-    --color-shadow: rgba(0, 0, 0, 0.45);
-    --color-table: #818cf8;
-    --color-text: #e2e8f0;
-    --color-text-secondary: #94a3b8;
-    --color-scrollbar: #334155;
-    --color-border: #1e293b;
-    --color-code-bg: #0000004d;
-    --color-code-text: #e2e8f0;
-  }
-}
+$dark: (
+  "color-accent": "#818cf826",
+  "color-bg": "#0b1120",
+  "color-bg-secondary": "#161f32",
+  "color-link": "#818cf8",
+  "color-secondary": "#c4b5fd",
+  "color-secondary-accent": "#c4b5fd15",
+  "color-shadow": "rgba(0, 0, 0, 0.45)",
+  "color-table": "#818cf8",
+  "color-text": "#e2e8f0",
+  "color-text-secondary": "#94a3b8",
+  "color-scrollbar": "#334155",
+  "color-border": "#1e293b",
+  "color-code-bg": "#0000004d",
+  "color-code-text": "#e2e8f0",
+);
+
+@include palette.palette($light, $dark);
+
 * {
   scrollbar-width: auto;
 }
@@ -131,10 +132,12 @@ nav ul li ul li a {
   nav {
     margin-bottom: 2.5rem;
   }
+
   nav ul li {
     width: auto;
   }
 }
+
 /* ---------- Theme switch ---------- */
 .theme-switch {
   align-items: center;
@@ -175,7 +178,7 @@ nav ul li ul li a {
   filter: none;
 }
 
-.theme-switch__btn[aria-pressed=true] {
+.theme-switch__btn[aria-pressed="true"] {
   background-color: var(--color-bg);
   box-shadow: var(--box-shadow) var(--color-shadow);
   color: var(--color-link);
@@ -232,7 +235,7 @@ a:hover {
 a b,
 a strong,
 button,
-input[type=submit] {
+input[type="submit"] {
   border-radius: 9999px;
   border-width: 0;
   box-shadow: var(--box-shadow) var(--color-shadow);
@@ -468,6 +471,7 @@ a.pagination__link:hover {
     display: none;
   }
 }
+
 /* ---------- Footer ---------- */
 footer {
   color: var(--color-text-secondary);

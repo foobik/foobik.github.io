@@ -39,11 +39,24 @@ jobs:
         with:
           dotnet-version: 10
 
+      - name: Setup Node.js
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: 22
+
       - name: Build site from base
-        run: dotnet run --project base/skunk-html.fsproj
+        run: |
+          npm ci --prefix base
+          npm run build:css --prefix base
+          npm run build:scss --prefix base
+          dotnet run --project base/skunk-html.fsproj
 
       - name: Build site from PR
-        run: dotnet run --project pr/skunk-html.fsproj
+        run: |
+          npm ci --prefix pr
+          npm run build:css --prefix pr
+          npm run build:scss --prefix pr
+          dotnet run --project pr/skunk-html.fsproj
 
       - name: Compare rendered output
         run: |

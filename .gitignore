@@ -446,5 +446,13 @@ Desktop.ini
 # SkunkHTML build output
 # skunk-html-output/
 
+# Tailwind CSS / PostCSS build
+node_modules/
+/css/styles.css
+
+# Sass build
+/css/tweaks.css
+*.css.map
+
 # Claude
 .claude/
