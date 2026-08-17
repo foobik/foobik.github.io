@@ -1,4 +1,4 @@
-.PHONY: install build build-css build-scss watch-css watch-scss serve clean help
+.PHONY: install build build-css build-scss watch-css watch-scss serve seo-check clean help
 
 help:
 	@echo "install     - npm install (Tailwind/PostCSS + Sass build tooling)"
@@ -7,6 +7,7 @@ help:
 	@echo "watch-css   - recompile css/styles.css on change"
 	@echo "watch-scss  - recompile css/tweaks.css on change"
 	@echo "build       - build-css + build-scss, then generate the site into skunk-html-output/"
+	@echo "seo-check   - run the SEO regression gate (tools/SeoCheck) against skunk-html-output/"
 	@echo "serve       - build, then serve skunk-html-output/ at http://localhost:8000"
 	@echo "clean       - remove build artifacts (css/styles.css, css/tweaks.css, obj/, bin/)"
 
@@ -27,6 +28,9 @@ watch-scss:
 
 build: build-css build-scss
 	dotnet run --project skunk-html.fsproj
+
+seo-check:
+	dotnet run --project tools/SeoCheck/SeoCheck.csproj -- skunk-html-output
 
 serve: build
 	python3 -m http.server 8000 --directory skunk-html-output

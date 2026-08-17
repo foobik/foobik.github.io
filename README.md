@@ -106,6 +106,7 @@ skunk-html/
 │   └── images/           # Images used in articles
 ├── scripts/              # Syntax highlighting script
 ├── themes/               # Alternative color themes (Sass sources, see Themes below)
+├── tools/SeoCheck/       # SEO regression check (C#/AngleSharp), run in CI
 ├── input.css              # Tailwind CSS source (compiles to css/styles.css)
 ├── tweaks.scss             # Active theme, Sass source (compiles to css/tweaks.css)
 ├── _palette.scss           # Shared Sass mixins used by tweaks.scss and themes/*.scss
@@ -167,5 +168,22 @@ Suggestions, bug reports, and pull requests welcome. Use [discussions](https://g
 
 - [Tailwind CSS](https://tailwindcss.com/) + [PostCSS](https://postcss.org/) - base layer styling (build-time only, via `npm`)
 - [Sass](https://sass-lang.com/) (Dart Sass) - theme/palette styling (build-time only, via `npm`)
+- [AngleSharp](https://anglesharp.github.io/) - HTML parsing for the SEO regression check below (build-time only, via NuGet)
 - [microlight.js](https://github.com/asvd/microlight) - syntax highlighting
 - [FSharp.Formatting](https://github.com/fsprojects/FSharp.Formatting) - Markdown processing
+
+## SEO regression checks
+
+`tools/SeoCheck` (`dotnet run --project tools/SeoCheck/SeoCheck.csproj -- skunk-html-output`, or `make seo-check`) is a small C#/AngleSharp console tool that parses every page in the built `skunk-html-output/` and fails (non-zero exit) if any page is missing a required tag or has one out of range. It runs in CI on every push/PR, right after the site is generated. Checked per page:
+
+- `<title>` length (5-70 characters)
+- meta description presence, uniqueness, and length (10-170 characters)
+- `<img>` tags have an `alt` attribute
+- `description`/`viewport` meta tags, plus `twitter:card`/`twitter:title`/`twitter:description`
+- Open Graph tags: `og:title`, `og:description`, `og:type`, `og:url`
+- `<link rel="canonical">` is present with a non-empty `href`
+- exactly one `<h1>`
+
+`404.html` is excluded (it's intentionally `noindex`'d). Thresholds are set from the site's own real content, so the check flags future regressions rather than pre-existing copy.
+
+This runs on .NET rather than as an npm package on purpose: an earlier version used the [seo-analyzer](https://github.com/maddevsio/seo-analyzer) npm package, but its CLI binary is broken as published (missing files in the tarball), several of its default rules didn't fit SkunkHTML's URL scheme, and it pulled in old, vulnerable transitive dependencies (`request`, `sitemap-stream-parser`) for a URL-crawling feature this project never used. Since the whole check is really "parse HTML, look for a handful of tags" - work AngleSharp already does - and .NET is already required to build the site at all, there was no good reason to also require Node just for this.
