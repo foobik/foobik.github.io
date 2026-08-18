@@ -12,8 +12,8 @@ let main _ =
         printfn $"Creating {Path.GetFileName Config.outputDir} folder"
         Directory.CreateDirectory(Config.outputDir) |> ignore
 
-    let header = Disk.readFile (Path.Combine(Config.htmlDir, "header.html"))
-    let footer = Disk.readFile (Path.Combine(Config.htmlDir, "footer.html"))
+    let header = Disk.readThemedFile Config.htmlDir Config.themeDir "header.html"
+    let footer = Disk.readThemedFile Config.htmlDir Config.themeDir "footer.html"
 
     let pages =
         Directory.GetFiles(Config.markdownDir, "*.md")

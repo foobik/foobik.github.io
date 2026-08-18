@@ -1,21 +1,11 @@
-// SkunkHTML — Modern (Tailwind-inspired) theme
-// Slate/Indigo palette, soft shadows, rounded corners, tight modern
-// typography. Supports three color modes via [data-color-mode] on <html>:
-//   - "light" -> forces the light palette below
-//   - "dark"  -> forces the dark palette below
-//   - "user"  -> follows the OS preference (prefers-color-scheme)
-// The mode is switched by the little control injected in html/header.html.
-//
-// Compiles to css/tweaks.css. This is the "default" template - to switch to
-// another one, set `theme` in Config.fs and rebuild with `npm run build:scss`
-// (or `make build-scss`). See themes/ for the other templates.
-@use "palette";
-@use "components";
+// SkunkHTML Theme: Test
+// Same palette as the default theme (tweaks.scss) - this theme exists to use
+// its own header.html/footer.html/head.html from this folder, not to change
+// the colors. Edit $light/$dark below if you want different colors too.
+@use "../../palette";
+@use "../../components";
 
-// Values are quoted strings on purpose - Sass otherwise parses bare hex/rgba
-// tokens as its native `color` type and re-serializes them (harmless, but it
-// rewrites e.g. `#4f46e51a` as `rgba(79, 70, 229, 0.1019607843)`), and strips
-// the quotes off multi-word font names in bare lists.
+// Values are quoted strings on purpose - see the comment in tweaks.scss.
 $light: (
   "width-content": "760px",
   "border-radius": "0.75rem",

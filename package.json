@@ -5,7 +5,7 @@
   "scripts": {
     "build:css": "postcss input.css -o css/styles.css",
     "watch:css": "postcss input.css -o css/styles.css --watch",
-    "build:scss": "sass tweaks.scss:css/tweaks.css --no-source-map",
+    "build:scss": "node tools/resolve-theme.js",
     "watch:scss": "sass --watch tweaks.scss:css/tweaks.css --no-source-map",
     "build": "npm run build:css && npm run build:scss && dotnet run --project skunk-html.fsproj"
   },

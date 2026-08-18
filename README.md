@@ -36,7 +36,7 @@ To publish a post: add a Markdown file to the `markdown-blog/` folder. The file 
 - **[llms.txt](https://llmstxt.org)** - a curated index of your posts/pages for LLMs, plus `llms-full.txt` with every post's full text in one file
 - **404 page** - a "not found" page in your site's style, generated automatically
 - **Dark mode** - respects your visitors' system preference automatically
-- **Themes** - choose from built-in color themes or tweak CSS variables
+- **Templates** - switch design (and optionally HTML) with one `Config.fs` setting, or tweak CSS variables directly
 - **Table of contents** - posts with 2+ headings get a sticky sidebar TOC with smooth-scroll anchor links and scroll-based active-section highlighting
 - **Smart header** - hides on scroll down, slides back in and stays pinned on scroll up
 - **Comments** - optional [Giscus](https://giscus.app/) integration
@@ -65,18 +65,24 @@ You don't need to know F# - just edit the text between the quotation marks. The 
 - Custom domain: `https://example.com`
 - Self-hosted with subpath: `https://example.com/blog`
 
-### Themes
+### Templates
 
-SkunkHTML ships with multiple color themes, written in Sass (`.scss`). `tweaks.scss` is the active theme; it compiles to `css/tweaks.css`, which is what `html/head.html` actually links. To switch themes, copy the contents of a theme file from `themes/` into `tweaks.scss`, then rebuild (`npm run build:scss` or `make build-scss`):
+SkunkHTML ships with multiple templates - each one a self-contained folder under `themes/` bundling a Sass color theme and (optionally) its own HTML. To switch, set `theme` in `Config.fs` and rebuild (`npm run build:scss` or `make build-scss` - or just `npm run build` / `make build`):
 
-| Theme | File | Style |
-|-------|------|-------|
-| Default | `tweaks.scss` | Clean, minimal with dark mode |
-| Ocean | `themes/theme-ocean.scss` | Cool blue tones (GitHub-inspired) |
-| Terminal | `themes/theme-terminal.scss` | Green-on-dark hacker aesthetic |
-| Ink | `themes/theme-ink.scss` | Warm serif typography (newspaper-inspired) |
+```fsharp
+let theme = "default"  // "default", "ocean", "terminal", or "ink" - see themes/
+```
 
-All themes respect `prefers-color-scheme` - they look great in both light and dark mode. Each theme file is just a Sass color map plus a couple of `@include` calls into the shared helpers in `_palette.scss` - edit the `$light`/`$dark` maps directly if you want to tweak individual colors instead of swapping the whole theme.
+| Template | Set `theme` to | Style |
+|----------|-----------------|-------|
+| Default | `"default"` | Clean, minimal with dark mode |
+| Ocean | `"ocean"` | Cool blue tones (GitHub-inspired) |
+| Terminal | `"terminal"` | Green-on-dark hacker aesthetic |
+| Ink | `"ink"` | Warm serif typography (newspaper-inspired) |
+
+All templates respect `prefers-color-scheme` and get the site's full design - fixed header, post cards, pagination, table of contents, theme switcher, and so on - not just colors: `_components.scss` holds that shared design as a Sass mixin every template includes, and each `themes/<name>/theme.scss` is just a color map (plus a couple of `@include` calls into the shared helpers in `_palette.scss`) on top of it. Edit a template's `$light`/`$dark` maps directly if you want to tweak individual colors instead of switching templates entirely.
+
+A template folder can also override the HTML: drop a `header.html`, `footer.html`, and/or `head.html` into `themes/<name>/` and it's used instead of the shared one in `html/` - anything you don't provide falls back to `html/` unchanged. None of the four built-in templates do this (they're palette-only), but you can add your own `themes/<name>/theme.scss` (following the shape of the existing ones) with HTML overrides alongside it, set `theme` to `"<name>"`, and it's picked up with no code changes.
 
 ### Content structure
 
@@ -93,6 +99,8 @@ Customize the header, footer, and page head by editing files in `html/`:
 - `head.html` - meta tags, CSS links, and favicons
 - `script_giscus.html` - Giscus comments configuration
 
+A non-default template (see Templates above) can override `header.html`/`footer.html`/`head.html` by providing its own copy in `themes/<name>/` - see that section for details.
+
 ## Folder structure
 
 ```
@@ -105,11 +113,14 @@ skunk-html/
 ├── markdown-blog/        # Your content goes here
 │   └── images/           # Images used in articles
 ├── scripts/              # Syntax highlighting script
-├── themes/               # Alternative color themes (Sass sources, see Themes below)
-├── tools/SeoCheck/       # SEO regression check (C#/AngleSharp), run in CI
+├── themes/               # Alternative templates - one folder per template, see Templates below
+├── tools/
+│   ├── resolve-theme.js  # Picks the Sass entry file from Config.fs's `theme` setting
+│   └── SeoCheck/         # SEO regression check (C#/AngleSharp), run in CI
 ├── input.css              # Tailwind CSS source (compiles to css/styles.css)
-├── tweaks.scss             # Active theme, Sass source (compiles to css/tweaks.css)
-├── _palette.scss           # Shared Sass mixins used by tweaks.scss and themes/*.scss
+├── tweaks.scss             # "default" template, Sass source (compiles to css/tweaks.css)
+├── _palette.scss           # Shared color-palette Sass mixins used by tweaks.scss and themes/*/theme.scss
+├── _components.scss        # Shared site-design Sass mixin used by tweaks.scss and themes/*/theme.scss
 ├── package.json            # Tailwind CSS / PostCSS + Sass build tooling
 ├── postcss.config.js      # PostCSS config
 ├── Makefile                # make wrapper around npm/dotnet build commands
@@ -122,7 +133,7 @@ skunk-html/
 
 ## Updating
 
-To pick up engine improvements later, use GitHub's **Sync fork** button (or merge upstream manually). Everything that makes your blog yours lives in `Config.fs`, `tweaks.scss`, and the content folders (`markdown-blog/`, `html/`, `assets/`, `fonts/`) - engine updates normally don't touch those, so syncing merges cleanly. `css/` is build output and isn't tracked in git except as part of `skunk-html-output/` (see Deployment modes below).
+To pick up engine improvements later, use GitHub's **Sync fork** button (or merge upstream manually). Everything that makes your blog yours lives in `Config.fs` (including which template is active), `tweaks.scss`, any `themes/<name>/` folders you've added or customized, and the content folders (`markdown-blog/`, `html/`, `assets/`, `fonts/`) - engine updates normally don't touch those, so syncing merges cleanly. `css/` is build output and isn't tracked in git except as part of `skunk-html-output/` (see Deployment modes below).
 
 ## Deployment modes
 
@@ -141,7 +152,7 @@ Needed if you use "Deploy from a branch", or just want to preview changes before
 git clone https://github.com/mg0x7BE/skunk-html.git
 cd skunk-html
 npm install     # installs Tailwind CSS / PostCSS and Sass (once)
-npm run build   # compiles input.css and tweaks.scss into css/, then runs the site generator
+npm run build   # compiles input.css and the active template's CSS into css/, then runs the site generator
 ```
 
 A `Makefile` mirrors the same commands if you prefer `make`: `make install`, `make build`, `make build-css` / `make build-scss`, `make watch-css` / `make watch-scss` (recompile on change), `make serve` (builds and serves `skunk-html-output/` at `localhost:8000`).
@@ -150,9 +161,9 @@ Your site ends up in `skunk-html-output/`. If you're using "Deploy from a branch
 
 ## How it works
 
-When you push a Markdown file to `markdown-blog/`, the build compiles `input.css` with Tailwind CSS and PostCSS into `css/styles.css`, and `tweaks.scss` with Sass into `css/tweaks.css`. Then a small F# program converts your Markdown to HTML using [FSharp.Formatting](https://github.com/fsprojects/FSharp.Formatting), generates RSS and sitemap, and wraps everything in a clean layout. Depending on your chosen Pages deployment mode (see above), this either runs on GitHub Actions automatically, or locally on your machine before you push.
+When you push a Markdown file to `markdown-blog/`, the build compiles `input.css` with Tailwind CSS and PostCSS into `css/styles.css`, and the active template's Sass (`tools/resolve-theme.js` picks `tweaks.scss` or a `themes/<name>/theme.scss` based on `Config.fs`'s `theme` setting) into `css/tweaks.css`. Then a small F# program converts your Markdown to HTML using [FSharp.Formatting](https://github.com/fsprojects/FSharp.Formatting) - reading `header.html`/`footer.html`/`head.html` from the template's folder if it overrides them, `html/` otherwise - generates RSS and sitemap, and wraps everything in a clean layout. Depending on your chosen Pages deployment mode (see above), this either runs on GitHub Actions automatically, or locally on your machine before you push.
 
-`input.css` (the base layer that used to be MVP.css) goes through Tailwind/PostCSS. `tweaks.scss` and the theme files in `themes/` go through Sass - they hold the actual color palette and component styling on top of Tailwind's base layer, via `_palette.scss`'s shared mixins.
+`input.css` (the base layer that used to be MVP.css) goes through Tailwind/PostCSS. `tweaks.scss` and the template files in `themes/*/theme.scss` go through Sass - they hold the actual color palette on top of `_components.scss`'s shared site design, via `_palette.scss`'s shared mixins.
 
 The entire build engine is ~400 lines of F#. No frameworks. No plugins beyond the Tailwind and Sass CSS builds. No magic.
 

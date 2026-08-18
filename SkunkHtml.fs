@@ -20,8 +20,7 @@ type Page =
 let private baseUrl = Url.normalizeBaseUrl Config.siteBaseUrl
 
 let private headTemplate =
-    Path.Combine(Config.htmlDir, "head.html")
-    |> Disk.readFile
+    Disk.readThemedFile Config.htmlDir Config.themeDir "head.html"
 
 let private highlightingScript =
     Path.Combine(Config.htmlDir, "script_syntax_highlighting.html")

@@ -6,6 +6,15 @@ module Disk =
     let readFile (path: string) =
         if File.Exists(path) then File.ReadAllText(path) else ""
 
+    /// Reads `fileName` from the active theme's folder if it provides one,
+    /// otherwise falls back to the shared version in `htmlDir`. Lets a theme
+    /// override header/footer/head without duplicating files it doesn't change.
+    let readThemedFile (htmlDir: string) (themeDir: string option) (fileName: string) =
+        let themedPath = themeDir |> Option.map (fun dir -> Path.Combine(dir, fileName))
+        match themedPath with
+        | Some path when File.Exists(path) -> readFile path
+        | _ -> readFile (Path.Combine(htmlDir, fileName))
+
     let writeFile (path: string) (content: string) =
         File.WriteAllText(path, content)
         printfn $"Generated: {Path.GetFileName path} -> {path}\n"

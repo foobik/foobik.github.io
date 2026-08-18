@@ -1,13 +1,20 @@
 // SkunkHTML Theme: Ink
 // A warm, newspaper-inspired reading theme with serif typography.
 // Respects user's color scheme preference.
-// To use: replace the contents of tweaks.scss with this file, then run
-// `npm run build:scss` (or `make build-scss`).
-@use "../palette";
+// Selected via the `theme` setting in Config.fs (set it to "ink").
+@use "../../palette";
+@use "../../components";
 
 // Values are quoted strings on purpose - see the comment in tweaks.scss.
+// These maps also need to cover border-radius/box-shadow/color-border/
+// color-code-bg/color-code-text/font-family-mono: _components.scss (the
+// shared design every template includes) references all of them, and if a
+// template's own map doesn't define one, it silently falls back to input.css's
+// single static, non-dark-aware default instead of this theme's own look.
 $light: (
   "width-content": "800px",
+  "border-radius": "2px",
+  "box-shadow": "0 1px 3px 0",
   "color-accent": "#d4a37415",
   "color-bg": "#faf8f5",
   "color-bg-secondary": "#eae6e0",
@@ -19,7 +26,11 @@ $light: (
   "color-text": "#2c2416",
   "color-text-secondary": "#6b5c4d",
   "color-scrollbar": "#c4b5a5",
+  "color-border": "#ddd8d0",
+  "color-code-bg": "#eae6e0",
+  "color-code-text": "#2c2416",
   "font-family": "Georgia, \"Times New Roman\", \"Noto Serif\", serif",
+  "font-family-mono": "ui-monospace, SFMono-Regular, \"SF Mono\", Menlo, Consolas, \"Liberation Mono\", monospace",
 );
 
 $dark: (
@@ -34,9 +45,13 @@ $dark: (
   "color-text": "#d4cdc4",
   "color-text-secondary": "#9a8e80",
   "color-scrollbar": "#3a3228",
+  "color-border": "#3a3228",
+  "color-code-bg": "#2a241c",
+  "color-code-text": "#d4cdc4",
 );
 
 @include palette.palette($light, $dark, $explicit-dark: false);
+@include components.base();
 @include palette.classic-accents($blockquote-border: var(--color-secondary));
 
 blockquote,

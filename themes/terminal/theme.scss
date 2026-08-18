@@ -2,15 +2,25 @@
 // A green-on-dark terminal aesthetic that respects user's color scheme preference.
 // Light mode: warm off-white with green accents.
 // Dark mode: classic terminal green on near-black.
-// To use: replace the contents of tweaks.scss with this file, then run
-// `npm run build:scss` (or `make build-scss`).
-@use "../palette";
+// Selected via the `theme` setting in Config.fs (set it to "terminal").
+@use "../../palette";
+@use "../../components";
 
 @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap");
 
 // Values are quoted strings on purpose - see the comment in tweaks.scss.
+// These maps also need to cover border-radius/box-shadow/color-border/
+// color-code-bg/color-code-text/font-family-mono: _components.scss (the
+// shared design every template includes) references all of them, and if a
+// template's own map doesn't define one, it silently falls back to input.css's
+// single static, non-dark-aware default instead of this theme's own look.
+// font-family-mono reuses the same JetBrains Mono stack as font-family above -
+// a terminal theme's code blocks should look like its body text, not a
+// different generic monospace font.
 $light: (
   "width-content": "800px",
+  "border-radius": "4px",
+  "box-shadow": "0 1px 3px 0",
   "color-accent": "#2ea04315",
   "color-bg": "#f6f8f0",
   "color-bg-secondary": "#e2e6d9",
@@ -22,7 +32,11 @@ $light: (
   "color-text": "#1b1f23",
   "color-text-secondary": "#57606a",
   "color-scrollbar": "#8dc572",
+  "color-border": "#d0d7c5",
+  "color-code-bg": "#e2e6d9",
+  "color-code-text": "#1b1f23",
   "font-family": "\"JetBrains Mono\", \"Courier New\", monospace",
+  "font-family-mono": "\"JetBrains Mono\", \"Courier New\", monospace",
 );
 
 $dark: (
@@ -37,9 +51,13 @@ $dark: (
   "color-text": "#b5e8b5",
   "color-text-secondary": "#7dab7d",
   "color-scrollbar": "#1e3a1e",
+  "color-border": "#1e3a1e",
+  "color-code-bg": "#141a14",
+  "color-code-text": "#b5e8b5",
 );
 
 @include palette.palette($light, $dark, $explicit-dark: false);
+@include components.base();
 @include palette.classic-accents($blockquote-border: var(--color-link));
 
 body {

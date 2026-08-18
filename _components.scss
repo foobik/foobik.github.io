@@ -1,0 +1,561 @@
+// Shared "modern site chrome" CSS used by tweaks.scss and every theme in
+// themes/. This is the part of the design that is NOT a color palette:
+// fixed/hide-on-scroll header, theme-switch control, typography, buttons,
+// code/quote/table styling, post cards, pagination, table-of-contents
+// sidebar, footer, scrollbars. Themes only override colors (and optionally
+// the small classic-accents extras in _palette.scss, and optionally their
+// own header.html/footer.html/head.html - see themes/) on top of this.
+//
+// Not compiled on its own - the leading underscore makes it a Sass "partial".
+
+@mixin base() {
+  * {
+    scrollbar-width: auto;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  /* ---------- Header / navigation ---------- */
+  /* Fixed bar that hides on scroll-down and slides back in (staying pinned) on
+     scroll-up - see the script at the bottom of html/header.html. --header-height
+     starts at this fallback and is corrected to the real rendered height by that
+     same script, so `body`'s offset and the table of contents' sticky offset
+     below both stay in sync with it. */
+  :root {
+    --header-height: 68px;
+  }
+
+  body {
+    padding-top: var(--header-height);
+  }
+
+  html {
+    scroll-padding-top: calc(var(--header-height) + 1rem);
+  }
+
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    background-color: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    padding-top: 0.85rem;
+    padding-bottom: 0.85rem;
+    transform: translateY(0);
+    transition: transform 0.25s ease, background-color 0.15s ease;
+  }
+
+  header.header--hidden {
+    transform: translateY(-100%);
+  }
+
+  nav {
+    max-width: var(--width-content);
+    margin: 0 auto;
+    margin-bottom: 0;
+    gap: 0.75rem;
+  }
+
+  nav a:first-child {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  nav a img {
+    border: 1px solid var(--color-border);
+    border-radius: 9999px;
+    box-shadow: none;
+    height: 44px !important;
+    width: 44px;
+    object-fit: cover;
+  }
+
+  nav ul {
+    align-items: center;
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  nav ul li {
+    margin: 0;
+  }
+
+  nav ul li a {
+    border-radius: 9999px;
+    color: var(--color-text);
+    display: inline-block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.45rem 0.9rem;
+    text-decoration: none;
+  }
+
+  nav ul li a:hover {
+    background-color: var(--color-bg-secondary);
+    filter: none;
+  }
+
+  nav ul li ul {
+    border-radius: var(--border-radius);
+    padding: 0.4rem;
+  }
+
+  nav ul li ul li a {
+    border-radius: calc(var(--border-radius) - 0.25rem);
+  }
+
+  @media (max-width: 768px) {
+    nav {
+      margin-bottom: 2.5rem;
+    }
+
+    nav ul li {
+      width: auto;
+    }
+  }
+
+  /* ---------- Theme switch ---------- */
+  .theme-switch {
+    align-items: center;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 9999px;
+    display: inline-flex;
+    gap: 0.15rem;
+    margin-left: auto;
+    padding: 0.2rem;
+  }
+
+  .theme-switch__btn {
+    align-items: center;
+    background: transparent;
+    border: none;
+    border-radius: 9999px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    display: inline-flex;
+    height: 2rem;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    width: 2rem;
+  }
+
+  .theme-switch__btn svg {
+    height: 1.05rem;
+    width: 1.05rem;
+    pointer-events: none;
+  }
+
+  .theme-switch__btn:hover {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    filter: none;
+  }
+
+  .theme-switch__btn[aria-pressed="true"] {
+    background-color: var(--color-bg);
+    box-shadow: var(--box-shadow) var(--color-shadow);
+    color: var(--color-link);
+  }
+
+  /* ---------- Typography ---------- */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  article h1:first-child,
+  main > h1:first-child {
+    font-size: 2.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: var(--color-text);
+  }
+
+  a {
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  article a,
+  main a,
+  p a,
+  li a {
+    border-bottom: 1px solid var(--color-accent);
+    text-decoration: none;
+  }
+
+  a:hover {
+    filter: none;
+    opacity: 0.8;
+  }
+
+  .publication-date {
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  /* ---------- Buttons ---------- */
+  a b,
+  a strong,
+  button,
+  input[type="submit"] {
+    border-radius: 9999px;
+    border-width: 0;
+    box-shadow: var(--box-shadow) var(--color-shadow);
+    font-weight: 600;
+    padding: 0.7rem 1.4rem;
+  }
+
+  a em,
+  a i {
+    border-radius: 9999px;
+    border-width: 1.5px;
+    padding: 0.7rem 1.4rem;
+  }
+
+  /* ---------- Code ---------- */
+  code,
+  samp {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 0.4rem;
+    font-family: var(--font-family-mono);
+    font-size: 0.85em;
+    padding: 0.1rem 0.45rem;
+  }
+
+  pre {
+    background-color: var(--color-code-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow) var(--color-shadow);
+  }
+
+  pre code,
+  pre samp {
+    background: transparent;
+    border: none;
+    color: var(--color-code-text);
+    font-family: var(--font-family-mono);
+    font-size: 0.9rem;
+    padding: 1rem 1.25rem;
+  }
+
+  /* ---------- Quotes ---------- */
+  blockquote,
+  blockquote p {
+    background-color: var(--color-secondary-accent);
+    border-left: 3px solid var(--color-secondary);
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    display: block;
+    font-size: 1.05rem;
+    font-style: italic;
+    line-height: var(--line-height);
+    margin: 1.5rem 0;
+    max-width: 100%;
+    padding: 1rem 1.5rem;
+    text-align: var(--justify-normal);
+  }
+
+  blockquote p {
+    border-left: none;
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  blockquote footer {
+    color: var(--color-text-secondary);
+    display: block;
+    font-size: small;
+    font-style: normal;
+    line-height: var(--line-height);
+    padding: 0.75rem 0 0;
+  }
+
+  /* ---------- Tables ---------- */
+  table {
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    white-space: normal;
+  }
+
+  table thead {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text);
+    font-weight: 700;
+  }
+
+  table tr:nth-child(even) {
+    background-color: var(--color-bg-secondary);
+  }
+
+  /* ---------- Post cards on the front page ---------- */
+  .publications h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    margin-top: 3rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .card-grid {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .card {
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow) var(--color-shadow);
+    padding: 0;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  }
+
+  .card:hover {
+    border-color: var(--color-link);
+    box-shadow: 0 8px 24px -8px var(--color-shadow);
+    transform: translateY(-2px);
+  }
+
+  .card-link {
+    border-bottom: none;
+    color: var(--color-text);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1.5rem;
+  }
+
+  .card-link:hover {
+    filter: none;
+    opacity: 1;
+  }
+
+  .card-date {
+    color: var(--color-text-secondary);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .card-title {
+    color: var(--color-text);
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+    margin: 0.5rem 0 0.6rem;
+  }
+
+  .card-link:hover .card-title {
+    color: var(--color-link);
+  }
+
+  .card-excerpt {
+    color: var(--color-text-secondary);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    flex-grow: 1;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0 0 1rem;
+    overflow: hidden;
+  }
+
+  .card-more {
+    color: var(--color-link);
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-top: auto;
+    transition: gap 0.15s ease;
+  }
+
+  .empty-state {
+    background-color: var(--color-bg-secondary);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--border-radius);
+    color: var(--color-text-secondary);
+    padding: 2rem;
+    text-align: center;
+  }
+
+  /* ---------- Pagination ---------- */
+  .pagination {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .pagination__link {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 9999px;
+    color: var(--color-text);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.55rem 1.1rem;
+    text-decoration: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  a.pagination__link:hover {
+    background-color: var(--color-bg);
+    border-color: var(--color-link);
+    color: var(--color-link);
+    filter: none;
+    opacity: 1;
+  }
+
+  .pagination__link--disabled {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .pagination__status {
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  @media (max-width: 480px) {
+    .pagination__status {
+      display: none;
+    }
+  }
+
+  /* ---------- Table of contents ---------- */
+  /* Only present on articles with 2+ headings - see SkunkHtml.fs. Widen `main`
+     so the sidebar has room without squeezing the reading column. */
+  main:has(.article-layout) {
+    max-width: 1100px;
+  }
+
+  .article-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 240px;
+    align-items: start;
+    gap: 3rem;
+  }
+
+  .toc {
+    position: sticky;
+    top: calc(var(--header-height) + 1.5rem);
+    max-height: calc(100vh - var(--header-height) - 3rem);
+    overflow-y: auto;
+    border-left: 1px solid var(--color-border);
+    padding-left: 1.25rem;
+  }
+
+  .toc__title {
+    color: var(--color-text-secondary);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin: 0 0 0.75rem;
+    text-transform: uppercase;
+  }
+
+  .toc__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .toc__item a {
+    border-bottom: none;
+    color: var(--color-text-secondary);
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.4;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .toc__item a:hover {
+    color: var(--color-text);
+  }
+
+  .toc__item--h3 a {
+    font-size: 0.8rem;
+    padding-left: 0.9rem;
+  }
+
+  .toc__item--active a {
+    color: var(--color-link);
+    font-weight: 700;
+  }
+
+  @media (max-width: 960px) {
+    main:has(.article-layout) {
+      max-width: var(--width-content);
+    }
+
+    .article-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .toc {
+      display: none;
+    }
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 0 1rem 2rem;
+  }
+
+  footer small a {
+    border-bottom: 1px solid var(--color-accent);
+    color: var(--color-text-secondary);
+  }
+
+  hr {
+    margin: 2rem 0;
+  }
+
+  /* ---------- Scrollbars ---------- */
+  *::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+  }
+}

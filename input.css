@@ -1,7 +1,7 @@
 /* Tailwind CSS build source - compiles to css/styles.css (see package.json / Makefile).
    Reimplements what MVP.css used to provide as plain Tailwind @layer base rules, so
-   css/tweaks.css and themes/*.css (which style everything through the CSS custom
-   properties defined below) keep working completely unchanged. */
+   tweaks.scss and each theme's theme.scss (which style everything through the CSS
+   custom properties defined below) keep working completely unchanged. */
 @import "tailwindcss";
 
 @source "./html";
