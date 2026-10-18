@@ -17,7 +17,7 @@
 
     <ItemGroup>
       <PackageReference Include="Fsharp.Formatting" Version="22.1.0" />
-      <PackageReference Include="FSharp.Core" Version="10.1.204" />
+      <PackageReference Include="FSharp.Core" Version="10.1.402" />
     </ItemGroup>
 
 </Project>
